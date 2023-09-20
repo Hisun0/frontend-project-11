@@ -1,6 +1,7 @@
 import onChange from 'on-change';
 import i18next from 'i18next';
 import getPosts from './parser.js';
+import { showPosts, showFeeds } from './render.js';
 
 i18next.init({
   resources: {
@@ -21,6 +22,8 @@ export const watchedFormState = (state) =>
     const input = document.querySelector('#url-input');
     const error = i18next.t(`error.${value}`, { lng: 'ru' });
     const pError = document.querySelector('.feedback');
+    input.value = '';
+    input.focus();
 
     if (state.validationErrorCode !== '') {
       input.classList.add('is-invalid');
@@ -30,9 +33,18 @@ export const watchedFormState = (state) =>
       input.classList.remove('is-invalid');
       pError.textContent = '';
     }
-    if (Array.isArray(value)) {
-      getPosts(value[value.length - 1])
-        .then((posts) => console.log(posts))
-        .catch((err) => console.log(err));
-    }
+  });
+
+export const watchedFeedState = (state) =>
+  onChange(state, (path, value) => {
+    const feeds = document.querySelector('.feeds');
+    feeds.innerHTML = '';
+    feeds.append(showFeeds(value));
+  });
+
+export const watchedPostState = (state) =>
+  onChange(state, (path, value) => {
+    const posts = document.querySelector('.posts');
+    posts.innerHTML = '';
+    posts.append(showPosts(value));
   });
