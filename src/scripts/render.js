@@ -36,7 +36,7 @@ const createPostItem = ({ title, link, id }) => {
 
   const a = createElementWithAttributes(
     'a',
-    ['fw-normal', 'link-secondary'],
+    ['fw-bold'],
     {
       href: link,
       'data-id': id,

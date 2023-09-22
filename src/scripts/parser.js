@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export default (url) =>
+const parser = (url) =>
   axios
     .get(
       `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
@@ -8,7 +8,10 @@ export default (url) =>
       )}`
     )
     .then((response) => {
+      if (!response) throw new Error(500);
       const parser = new DOMParser();
       return parser.parseFromString(response.data.contents, 'text/html');
     })
     .catch((err) => console.log(err));
+
+export default parser;

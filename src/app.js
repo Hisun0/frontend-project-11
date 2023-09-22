@@ -37,7 +37,7 @@ export default () => {
     urls: [],
     posts: [],
     feeds: [],
-    validationErrorCode: '',
+    responseCode: '',
   };
 
   const form = document.querySelector('form');
@@ -48,23 +48,26 @@ export default () => {
 
     getValidationResult(inputValue)
       .then((url) => {
-        if (state.urls.includes(url)) {
-          watchedFormState(state).validationErrorCode = 409;
-          return;
-        }
-        state.urls.push(url);
+        if (state.urls.includes(url)) throw new Error(409);
+        watchedFormState(state).urls.push(url);
+        watchedFormState(state).responseCode = '';
+
         getData(url)
           .then((data) => {
-            console.log(data);
+            if (!data) throw new Error(500);
+            console.log(data.feeds, data.posts);
             watchedFeedState(state).feeds.push(...data.feeds);
             watchedPostState(state).posts.push(...data.posts);
+            watchedFormState(state).responseCode = 200;
           })
-          .catch((err) => console.log(err));
-        watchedFormState(state).validationErrorCode = '';
+          .catch((err) => {
+            watchedFormState(state).responseCode = err.message;
+          });
       })
       .catch((err) => {
-        console.log(err);
-        watchedFormState(state).validationErrorCode = 405;
+        watchedFormState(state).responseCode = err.message;
       });
   });
+  const a = document.querySelectorAll('a');
+  console.log(a);
 };
