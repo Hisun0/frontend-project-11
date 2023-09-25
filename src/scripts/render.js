@@ -1,15 +1,8 @@
-const createElementWithAttributes = (
-  tagName,
-  classNames = [],
-  attributes = {},
-  text
-) => {
+const createElementWithAttributes = (tagName, classNames, attributes, text) => {
   const element = document.createElement(tagName);
   classNames.forEach((className) => element.classList.add(className));
   if (attributes) {
-    Object.entries(attributes).forEach(([key, value]) =>
-      element.setAttribute(key, value)
-    );
+    Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, value));
   }
   element.textContent = text;
   return element;
@@ -43,7 +36,7 @@ const createPostItem = ({ title, link, id }) => {
       target: '_blank',
       rel: 'noopener noreferrer',
     },
-    title
+    title,
   );
 
   const button = createElementWithAttributes(
@@ -55,7 +48,7 @@ const createPostItem = ({ title, link, id }) => {
       'data-bs-toggle': 'modal',
       'data-bs-target': '#modal',
     },
-    'Просмотр'
+    'Просмотр',
   );
 
   li.append(a, button);
@@ -73,7 +66,7 @@ const createFeedItem = ({ title, description }) => {
     'p',
     ['m-0', 'small', 'text-black-50'],
     false,
-    description
+    description,
   );
 
   li.append(h3, p);
@@ -87,7 +80,7 @@ const createCard = (title, list) => {
     'h2',
     ['card-title', 'h4'],
     false,
-    title
+    title,
   );
 
   cardBody.append(h2);
