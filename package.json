@@ -8,6 +8,9 @@
     "start": "webpack serve",
     "build": "webpack"
   },
+  "simple-git-hooks": {
+    "pre-commit": "make lint"
+  },
   "author": "Rodion",
   "license": "ISC",
   "dependencies": {
@@ -28,6 +31,7 @@
   "devDependencies": {
     "eslint": "^8.49.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.28.1"
+    "eslint-plugin-import": "^2.28.1",
+    "simple-git-hooks": "^2.9.0"
   }
 }

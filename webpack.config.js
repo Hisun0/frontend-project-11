@@ -34,7 +34,7 @@ export default {
 
   devServer: {
     static: {
-      directory: path.join(__dirname, 'dist'),
+      directory: path.join(dirName, 'dist'),
     },
     open: true,
   },
