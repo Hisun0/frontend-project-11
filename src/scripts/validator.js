@@ -4,15 +4,16 @@ export default (url, urls) =>
   new Promise((resolve, reject) => {
     setLocale({
       string: {
-        url: () => ({ key: 'shouldBeValidURL' }),
+        url: () => 'shouldBeValidURL',
+        required: () => 'shouldBeNotEmpty',
       },
-      required: () => ({ key: 'shouldBeNotEmpty' }),
-      notOneOf: () => ({ key: 'alreadyExists' }),
+      notOneOf: () => 'alreadyExist',
     });
 
-    const urlSchema = string().required().url().notOneOf(urls);
+    const urlSchema = string().required().url().notOneOf(urls, 'alreadyExist');
+
     urlSchema
       .validate(url)
       .then((result) => resolve(result))
-      .catch((err) => reject(err.message.key));
+      .catch((err) => reject(err.message));
   });

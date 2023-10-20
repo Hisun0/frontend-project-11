@@ -7,6 +7,7 @@ import getValidationResult from './scripts/validator.js';
 import getData from './scripts/parser.js';
 import i18next from 'i18next';
 import ru from './locales/ru.js';
+import updater from './scripts/updater.js';
 
 export default () => {
   const state = {
@@ -29,7 +30,6 @@ export default () => {
     event.preventDefault();
     const formData = new FormData(event.target);
     const inputValue = formData.get('url');
-
     getValidationResult(inputValue, state.urls)
       .then((url) => {
         state.urls.push(url);
@@ -39,7 +39,8 @@ export default () => {
             watchedFeedState(state).feeds.push(...data.feeds);
             watchedPostState(state).posts.push(...data.posts);
           })
-          .catch((err) => console.log(err));
+          .catch((err) => console.log(err))
+          .finally(() => setTimeout(() => updater(state), 5000));
       })
       .catch((err) => (watchedFormState(state).validationResult = err));
   });

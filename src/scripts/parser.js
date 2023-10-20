@@ -1,6 +1,24 @@
 import axios from 'axios';
 import { uniqueId } from 'lodash';
 
+const filterFromCData = (element) => {
+  const mapping = {
+    default: ['[CDATA[', ']]'],
+    exclamation: ['<![CDATA[', ']]>'],
+  };
+  const text = element.childNodes[0].nodeValue;
+  const filter = (dataType) => {
+    const [textStart, textEnd] = mapping[dataType];
+    return text.replace(textStart, '').replace(textEnd, '');
+  };
+
+  if (text.startsWith('<![')) {
+    return filter('exclamation');
+  }
+
+  return filter('default');
+};
+
 const parser = (url) =>
   new Promise((resolve, reject) =>
     axios
@@ -16,54 +34,45 @@ const parser = (url) =>
       .catch((err) => reject(err)),
   );
 
+const getPosts = (newDocument) => {
+  const items = newDocument.querySelectorAll('item');
+  const posts = [];
+  items.forEach((item) => {
+    const title = filterFromCData(item.querySelector('title'));
+
+    const description = filterFromCData(item.querySelector('description'));
+
+    const url = [...item.childNodes]
+      .filter((el) => el.nodeType === 3)
+      .filter((el) => el.data.indexOf('http') >= 0)[0]
+      .data.trim();
+
+    posts.push({
+      title,
+      description,
+      url,
+      id: uniqueId(),
+    });
+  });
+
+  return posts;
+};
+
+const getFeeds = (newDocument, url) => {
+  const title = filterFromCData(newDocument.querySelector('title'));
+  const description = newDocument.querySelector('description').textContent;
+  return [{ title, description, id: uniqueId(), url }];
+};
+
 const getData = (url) =>
   new Promise((resolve, reject) =>
     parser(url)
       .then((RSSDocument) => {
-        console.log(RSSDocument);
-        console.log(url);
-        const mainTitle = RSSDocument.querySelector('title').textContent;
-        const mainDescription =
-          RSSDocument.querySelector('description').textContent;
-        const items = RSSDocument.querySelectorAll('item');
-        const posts = [];
-        items.forEach((item) => {
-          const title = item.querySelector('title').textContent;
-
-          const description = item
-            .querySelector('description')
-            .childNodes[0].nodeValue.replace('[CDATA[', '')
-            .replace(']]', '');
-
-          const link = [...item.childNodes]
-            .filter((el) => el.nodeType === 3)
-            .filter((el) => el.data.indexOf('http') >= 0)[0]
-            .data.trim();
-
-          posts.push({
-            title,
-            description,
-            link,
-            id: uniqueId(),
-          });
-        });
-        resolve({
-          feeds: [
-            { title: mainTitle, description: mainDescription, id: uniqueId() },
-          ],
-          posts,
-        });
+        const feeds = getFeeds(RSSDocument, url);
+        const posts = getPosts(RSSDocument);
+        resolve({ feeds, posts });
       })
       .catch((err) => reject(err)),
   );
-
-// const parser = (url) => {
-//   getData(url)
-//     .then((response) => {
-//       setTimeout(parser, 5000);
-//       return response;
-//     })
-//     .catch((err) => console.log(err));
-// };
 
 export default getData;
