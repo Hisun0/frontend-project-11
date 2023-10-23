@@ -6,6 +6,7 @@ import elements from '../elements.js';
 export const watchedFormState = (state) =>
   onChange(state, (path, value) => {
     if (path === 'validationResult') {
+      if (value === 'Network Error') value = 'networkError';
       const responseText = i18next.t(`code.${value}`);
       elements.feedback.classList.remove('text-danger', 'text-success');
       elements.input.classList.remove('is-valid', 'is-invalid');

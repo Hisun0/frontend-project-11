@@ -27,7 +27,6 @@ const parser = (url) =>
       )}`,
     )
     .then((response) => {
-      console.log(response);
       const DOMparser = new DOMParser();
       return Promise.resolve(
         DOMparser.parseFromString(response.data.contents, 'text/xml'),
