@@ -21,6 +21,8 @@ const mapping = {
     elements.submitButton.disabled = false;
     elements.input.removeAttribute('readonly');
   },
+  posts: (postList) => elements.posts.append(showPosts(postList)),
+  feeds: (feedList) => elements.feeds.append(showFeeds(feedList)),
 };
 
 export const watchedFormState = (state) => onChange(state, (path, formStatus) => {
@@ -37,14 +39,9 @@ export const watchedValidationState = (state) => onChange(state, (path, validati
   mapping.setFormStatus(validationStatus);
 });
 
-export const watchedFeedState = (state) => onChange(state, (path, value) => {
-  elements.feeds.innerHTML = '';
-  elements.feeds.append(showFeeds(value));
-});
-
-export const watchedPostState = (state) => onChange(state, (path, value) => {
-  elements.posts.innerHTML = '';
-  elements.posts.append(showPosts(value));
+export const watchedItemsState = (state) => onChange(state, (path, value) => {
+  elements[path].innerHTML = '';
+  mapping[path](value);
 });
 
 export const watchedModalState = (state) => onChange(state, (path, value) => {

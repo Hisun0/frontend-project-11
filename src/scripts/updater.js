@@ -1,5 +1,5 @@
 import getData from './parser.js';
-import { watchedPostState } from './view.js';
+import { watchedItemsState } from './view.js';
 import elements from '../elements.js';
 import modalButtonHandler from '../handlers/modalButton.js';
 
@@ -16,7 +16,7 @@ const updater = (state) => {
       .then((data) => {
         const filteredData = filterData(state, data, 'posts');
         if (filteredData.length !== 0) {
-          watchedPostState(state).posts = [
+          watchedItemsState(state).posts = [
             ...filterData(state, data, 'posts'),
             ...state.posts,
           ];

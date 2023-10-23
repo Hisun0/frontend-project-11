@@ -1,7 +1,6 @@
 import {
   watchedFormState,
-  watchedFeedState,
-  watchedPostState,
+  watchedItemsState,
   watchedValidationState,
 } from '../scripts/view.js';
 import getValidationResult from '../scripts/validator.js';
@@ -21,8 +20,8 @@ export default (event, state) => {
         .then((data) => {
           state.urls.push(url);
           watchedFormState(state).formState = 'filling';
-          watchedFeedState(state).feeds.push(...data.feeds);
-          watchedPostState(state).posts.push(...data.posts);
+          watchedItemsState(state).feeds.push(...data.feeds);
+          watchedItemsState(state).posts.push(...data.posts);
           watchedValidationState(state).validationResult = 'success';
           elements.modalButtons().forEach((modalButton) => {
             modalButton.addEventListener('click', () => modalButtonHandler(modalButton, state));
