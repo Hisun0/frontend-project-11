@@ -1,10 +1,7 @@
 import getData from './parser.js';
-import {
-  watchedLinkState,
-  watchedPostState,
-  watchedModalState,
-} from './view.js';
+import { watchedPostState } from './view.js';
 import elements from '../elements.js';
+import modalButtonHandler from '../handlers/modalButton.js';
 
 const filterData = (state, data, type) => {
   const nameSet = new Set(state[type].map((el) => el.title));
@@ -25,14 +22,7 @@ const updater = (state) => {
           ];
         }
         elements.modalButtons().forEach((modalButton) => {
-          modalButton.addEventListener('click', () => {
-            const postId = modalButton.dataset.buttonId;
-            console.log('clicked');
-            const post = state.posts.find(({ id }) => postId === id);
-            post.clicked = true;
-            watchedModalState(state).modalData = post;
-            watchedLinkState(state).clickedLinks.push(postId);
-          });
+          modalButton.addEventListener('click', () => modalButtonHandler(modalButton, state));
         });
       })
       .catch((err) => console.log(err))
