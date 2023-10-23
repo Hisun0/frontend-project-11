@@ -31,7 +31,12 @@ const parser = (url) => axios
       DOMparser.parseFromString(response.data.contents, 'text/xml'),
     );
   })
-  .catch((err) => Promise.reject(err));
+  .catch((err) => {
+    if (err.message === 'Network Error') {
+      return Promise.reject(new Error('networkError'));
+    }
+    return Promise.reject(err);
+  });
 
 const getPosts = (newDocument) => {
   const items = newDocument.querySelectorAll('item');
