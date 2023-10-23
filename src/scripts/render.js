@@ -2,7 +2,9 @@ const createElementWithAttributes = (tagName, classNames, attributes, text) => {
   const element = document.createElement(tagName);
   classNames.forEach((className) => element.classList.add(className));
   if (attributes) {
-    Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, value));
+    Object.entries(attributes).forEach(([key, value]) =>
+      element.setAttribute(key, value),
+    );
   }
   element.textContent = text;
   return element;
@@ -17,7 +19,7 @@ const createList = (items) => {
   return ul;
 };
 
-const createPostItem = ({ title, link, id }) => {
+const createPostItem = ({ title, url, clicked, id }) => {
   const li = createElementWithAttributes('li', [
     'list-group-item',
     'd-flex',
@@ -27,11 +29,13 @@ const createPostItem = ({ title, link, id }) => {
     'border-end-0',
   ]);
 
+  const aClass = clicked ? ['fw-normal', 'link-secondary'] : ['fw-bold'];
+
   const a = createElementWithAttributes(
     'a',
-    ['fw-bold'],
+    aClass,
     {
-      href: link,
+      href: url,
       'data-id': id,
       target: '_blank',
       rel: 'noopener noreferrer',
@@ -44,7 +48,7 @@ const createPostItem = ({ title, link, id }) => {
     ['btn', 'btn-outline-primary', 'btn-sm'],
     {
       type: 'button',
-      'data-id': id,
+      'data-button-id': id,
       'data-bs-toggle': 'modal',
       'data-bs-target': '#modal',
     },

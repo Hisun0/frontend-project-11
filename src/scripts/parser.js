@@ -51,6 +51,7 @@ const getPosts = (newDocument) => {
       title,
       description,
       url,
+      clicked: false,
       id: uniqueId(),
     });
   });
@@ -58,17 +59,17 @@ const getPosts = (newDocument) => {
   return posts;
 };
 
-const getFeeds = (newDocument, url) => {
+const getFeeds = (newDocument) => {
   const title = filterFromCData(newDocument.querySelector('title'));
   const description = newDocument.querySelector('description').textContent;
-  return [{ title, description, id: uniqueId(), url }];
+  return [{ title, description, id: uniqueId() }];
 };
 
 const getData = (url) =>
   new Promise((resolve, reject) =>
     parser(url)
       .then((RSSDocument) => {
-        const feeds = getFeeds(RSSDocument, url);
+        const feeds = getFeeds(RSSDocument);
         const posts = getPosts(RSSDocument);
         resolve({ feeds, posts });
       })

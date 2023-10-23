@@ -1,5 +1,10 @@
 import getData from './parser.js';
-import { watchedFeedState, watchedPostState } from './view.js';
+import {
+  watchedLinkState,
+  watchedPostState,
+  watchedModalState,
+} from './view.js';
+import elements from '../elements.js';
 import _ from 'lodash';
 
 const filterData = (state, data, type) => {
@@ -13,11 +18,23 @@ const updater = (state) => {
   state.urls.forEach((url) => {
     getData(url)
       .then((data) => {
-        if (!filterData(state, data, 'posts'))
-          return setTimeout(() => updater(state), 5000);
-        watchedPostState(state).posts.unshift(
-          ...filterData(state, data, 'posts'),
-        );
+        const filteredData = filterData(state, data, 'posts');
+        if (filteredData.length !== 0) {
+          watchedPostState(state).posts = [
+            ...filterData(state, data, 'posts'),
+            ...state.posts,
+          ];
+        }
+        elements.modalButtons().forEach((modalButton) => {
+          modalButton.addEventListener('click', () => {
+            const postId = modalButton.dataset.buttonId;
+            console.log('clicked');
+            const post = state.posts.find(({ id }) => postId === id);
+            post.clicked = true;
+            watchedModalState(state).modalData = post;
+            watchedLinkState(state).clickedLinks.push(postId);
+          });
+        });
       })
       .catch((err) => console.log(err))
       .finally(() => setTimeout(() => updater(state), 5000));
