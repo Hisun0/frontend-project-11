@@ -3,32 +3,38 @@ import i18next from 'i18next';
 import { showPosts, showFeeds } from './render.js';
 import elements from '../elements.js';
 
-export const watchedFormState = (state) => onChange(state, (path, value) => {
-  if (path === 'validationResult') {
-    const responseText = i18next.t(`code.${value}`);
-    elements.feedback.classList.remove('text-danger', 'text-success');
-    elements.input.classList.remove('is-valid', 'is-invalid');
-    elements.feedback.textContent = responseText;
-    elements.input.value = '';
-    elements.input.focus();
-
-    if (value === 'success') {
+const mapping = {
+  setFormStatus: (result) => {
+    if (result === 'success') {
       elements.input.classList.add('is-valid');
       elements.feedback.classList.add('text-success');
     } else {
       elements.input.classList.add('is-invalid');
       elements.feedback.classList.add('text-danger');
     }
-  }
-  if (path === 'formState') {
-    if (value === 'processing') {
-      elements.submitButton.disabled = true;
-      elements.input.setAttribute('readonly', 'true');
-    } else {
-      elements.submitButton.disabled = false;
-      elements.input.removeAttribute('readonly');
-    }
-  }
+  },
+  processing: () => {
+    elements.submitButton.disabled = true;
+    elements.input.setAttribute('readonly', 'true');
+  },
+  filling: () => {
+    elements.submitButton.disabled = false;
+    elements.input.removeAttribute('readonly');
+  },
+};
+
+export const watchedFormState = (state) => onChange(state, (path, formStatus) => {
+  mapping[formStatus]();
+});
+
+export const watchedValidationState = (state) => onChange(state, (path, validationStatus) => {
+  elements.feedback.classList.remove('text-danger', 'text-success');
+  elements.input.classList.remove('is-valid', 'is-invalid');
+  elements.feedback.textContent = i18next.t(`code.${validationStatus}`);
+  elements.input.value = '';
+  elements.input.focus();
+
+  mapping.setFormStatus(validationStatus);
 });
 
 export const watchedFeedState = (state) => onChange(state, (path, value) => {
@@ -37,13 +43,11 @@ export const watchedFeedState = (state) => onChange(state, (path, value) => {
 });
 
 export const watchedPostState = (state) => onChange(state, (path, value) => {
-  console.log('view', value);
   elements.posts.innerHTML = '';
   elements.posts.append(showPosts(value));
 });
 
 export const watchedModalState = (state) => onChange(state, (path, value) => {
-  console.log(value);
   const { title, description } = value;
   elements.modalHeader.textContent = title;
   elements.modalBody.textContent = description;

@@ -5,6 +5,7 @@ import {
   watchedPostState,
   watchedModalState,
   watchedLinkState,
+  watchedValidationState,
 } from './scripts/view.js';
 import getValidationResult from './scripts/validator.js';
 import getData from './scripts/parser.js';
@@ -44,7 +45,7 @@ export default () => {
             watchedFormState(state).formState = 'filling';
             watchedFeedState(state).feeds.push(...data.feeds);
             watchedPostState(state).posts.push(...data.posts);
-            watchedFormState(state).validationResult = 'success';
+            watchedValidationState(state).validationResult = 'success';
             elements.modalButtons().forEach((modalButton) => {
               modalButton.addEventListener('click', () => {
                 const postId = modalButton.dataset.buttonId;
@@ -57,13 +58,13 @@ export default () => {
             });
           })
           .catch((err) => {
-            watchedFormState(state).validationResult = err.message;
+            watchedValidationState(state).validationResult = err.message;
             watchedFormState(state).formState = 'filling';
           })
           .finally(() => updater(state));
       })
       .catch((err) => {
-        watchedFormState(state).validationResult = err;
+        watchedValidationState(state).validationResult = err;
       });
   });
 };
