@@ -19,20 +19,19 @@ const filterFromCData = (element) => {
   return filter('default');
 };
 
-const parser = (url) =>
-  axios
-    .get(
-      `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
-        url,
-      )}`,
-    )
-    .then((response) => {
-      const DOMparser = new DOMParser();
-      return Promise.resolve(
-        DOMparser.parseFromString(response.data.contents, 'text/xml'),
-      );
-    })
-    .catch((err) => Promise.reject(err));
+const parser = (url) => axios
+  .get(
+    `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
+      url,
+    )}`,
+  )
+  .then((response) => {
+    const DOMparser = new DOMParser();
+    return Promise.resolve(
+      DOMparser.parseFromString(response.data.contents, 'text/xml'),
+    );
+  })
+  .catch((err) => Promise.reject(err));
 
 const getPosts = (newDocument) => {
   const items = newDocument.querySelectorAll('item');
@@ -62,16 +61,15 @@ const getFeeds = (newDocument) => {
   return [{ title, description, id: uniqueId() }];
 };
 
-const getData = (url) =>
-  parser(url)
-    .then((RSSDocument) => {
-      if (RSSDocument.querySelector('parsererror')) {
-        throw new Error('shouldBeValidRSS');
-      }
-      const feeds = getFeeds(RSSDocument);
-      const posts = getPosts(RSSDocument);
-      return Promise.resolve({ feeds, posts });
-    })
-    .catch((err) => Promise.reject(err));
+const getData = (url) => parser(url)
+  .then((RSSDocument) => {
+    if (RSSDocument.querySelector('parsererror')) {
+      throw new Error('shouldBeValidRSS');
+    }
+    const feeds = getFeeds(RSSDocument);
+    const posts = getPosts(RSSDocument);
+    return Promise.resolve({ feeds, posts });
+  })
+  .catch((err) => Promise.reject(err));
 
 export default getData;

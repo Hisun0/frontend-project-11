@@ -2,8 +2,7 @@ const createElementWithAttributes = (tagName, classNames, attributes, text) => {
   const element = document.createElement(tagName);
   classNames.forEach((className) => element.classList.add(className));
   if (attributes) {
-    Object.entries(attributes).forEach(([key, value]) =>
-      element.setAttribute(key, value));
+    Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, value));
   }
   element.textContent = text;
   return element;
