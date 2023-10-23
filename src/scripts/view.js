@@ -39,9 +39,9 @@ export const watchedValidationState = (state) => onChange(state, (path, validati
   mapping.setFormStatus(validationStatus);
 });
 
-export const watchedItemsState = (state) => onChange(state, (path, value) => {
+export const watchedItemsState = (state) => onChange(state, (path, items) => {
   elements[path].innerHTML = '';
-  mapping[path](value);
+  mapping[path](items);
 });
 
 export const watchedModalState = (state) => onChange(state, (path, value) => {
