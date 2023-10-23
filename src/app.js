@@ -1,3 +1,4 @@
+import i18next from 'i18next';
 import {
   watchedFormState,
   watchedFeedState,
@@ -7,7 +8,6 @@ import {
 } from './scripts/view.js';
 import getValidationResult from './scripts/validator.js';
 import getData from './scripts/parser.js';
-import i18next from 'i18next';
 import ru from './locales/ru.js';
 import updater from './scripts/updater.js';
 import elements from './elements.js';
@@ -16,6 +16,7 @@ export default () => {
   const state = {
     urls: [],
     posts: [],
+    formState: 'filling',
     feeds: [],
     modalData: null,
     clickedLinks: [],
@@ -36,13 +37,14 @@ export default () => {
     const inputValue = formData.get('url');
     getValidationResult(inputValue, state.urls)
       .then((url) => {
-        state.urls.push(url);
-        watchedFormState(state).validationResult = 'success';
+        watchedFormState(state).formState = 'processing';
         getData(url)
           .then((data) => {
-            console.log(state.posts);
+            state.urls.push(url);
+            watchedFormState(state).formState = 'filling';
             watchedFeedState(state).feeds.push(...data.feeds);
             watchedPostState(state).posts.push(...data.posts);
+            watchedFormState(state).validationResult = 'success';
             elements.modalButtons().forEach((modalButton) => {
               modalButton.addEventListener('click', () => {
                 const postId = modalButton.dataset.buttonId;
@@ -54,9 +56,14 @@ export default () => {
               });
             });
           })
-          .catch((err) => console.log(err))
+          .catch((err) => {
+            watchedFormState(state).validationResult = err.message;
+            watchedFormState(state).formState = 'filling';
+          })
           .finally(() => updater(state));
       })
-      .catch((err) => (watchedFormState(state).validationResult = err));
+      .catch((err) => {
+        watchedFormState(state).validationResult = err;
+      });
   });
 };

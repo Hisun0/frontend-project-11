@@ -5,7 +5,6 @@ import {
   watchedModalState,
 } from './view.js';
 import elements from '../elements.js';
-import _ from 'lodash';
 
 const filterData = (state, data, type) => {
   const nameSet = new Set(state[type].map((el) => el.title));

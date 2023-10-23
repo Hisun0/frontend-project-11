@@ -20,19 +20,20 @@ const filterFromCData = (element) => {
 };
 
 const parser = (url) =>
-  new Promise((resolve, reject) =>
-    axios
-      .get(
-        `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
-          url,
-        )}`,
-      )
-      .then((response) => {
-        const DOMparser = new DOMParser();
-        resolve(DOMparser.parseFromString(response.data.contents, 'text/html'));
-      })
-      .catch((err) => reject(err)),
-  );
+  axios
+    .get(
+      `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
+        url,
+      )}`,
+    )
+    .then((response) => {
+      console.log(response);
+      const DOMparser = new DOMParser();
+      return Promise.resolve(
+        DOMparser.parseFromString(response.data.contents, 'text/xml'),
+      );
+    })
+    .catch((err) => Promise.reject(err));
 
 const getPosts = (newDocument) => {
   const items = newDocument.querySelectorAll('item');
@@ -42,10 +43,7 @@ const getPosts = (newDocument) => {
 
     const description = filterFromCData(item.querySelector('description'));
 
-    const url = [...item.childNodes]
-      .filter((el) => el.nodeType === 3)
-      .filter((el) => el.data.indexOf('http') >= 0)[0]
-      .data.trim();
+    const url = item.querySelector('link').textContent;
 
     posts.push({
       title,
@@ -66,14 +64,15 @@ const getFeeds = (newDocument) => {
 };
 
 const getData = (url) =>
-  new Promise((resolve, reject) =>
-    parser(url)
-      .then((RSSDocument) => {
-        const feeds = getFeeds(RSSDocument);
-        const posts = getPosts(RSSDocument);
-        resolve({ feeds, posts });
-      })
-      .catch((err) => reject(err)),
-  );
+  parser(url)
+    .then((RSSDocument) => {
+      if (RSSDocument.querySelector('parsererror')) {
+        throw new Error('shouldBeValidRSS');
+      }
+      const feeds = getFeeds(RSSDocument);
+      const posts = getPosts(RSSDocument);
+      return Promise.resolve({ feeds, posts });
+    })
+    .catch((err) => Promise.reject(err));
 
 export default getData;

@@ -1,25 +1,34 @@
 import onChange from 'on-change';
-import { showPosts, showFeeds } from './render.js';
 import i18next from 'i18next';
+import { showPosts, showFeeds } from './render.js';
 import elements from '../elements.js';
 
 export const watchedFormState = (state) =>
   onChange(state, (path, value) => {
-    const responseText = i18next.t(`code.${value}`);
-    elements.feedback.classList.remove('text-danger', 'text-success');
-    elements.input.classList.remove('is-valid', 'is-invalid');
-    elements.feedback.textContent = responseText;
-    elements.input.value = '';
-    elements.input.focus();
+    if (path === 'validationResult') {
+      const responseText = i18next.t(`code.${value}`);
+      elements.feedback.classList.remove('text-danger', 'text-success');
+      elements.input.classList.remove('is-valid', 'is-invalid');
+      elements.feedback.textContent = responseText;
+      elements.input.value = '';
+      elements.input.focus();
 
-    if (state.validationResult === 'success') {
-      elements.input.classList.add('is-valid');
-      elements.feedback.classList.add('text-success');
-      return;
-    } else {
-      elements.input.classList.add('is-invalid');
-      elements.feedback.classList.add('text-danger');
-      return;
+      if (value === 'success') {
+        elements.input.classList.add('is-valid');
+        elements.feedback.classList.add('text-success');
+      } else {
+        elements.input.classList.add('is-invalid');
+        elements.feedback.classList.add('text-danger');
+      }
+    }
+    if (path === 'formState') {
+      if (value === 'processing') {
+        elements.submitButton.disabled = true;
+        elements.input.setAttribute('readonly', 'true');
+      } else {
+        elements.submitButton.disabled = false;
+        elements.input.removeAttribute('readonly');
+      }
     }
   });
 

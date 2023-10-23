@@ -9,4 +9,5 @@ export default {
   modalHeader: document.querySelector('.modal-header'),
   modalBody: document.querySelector('.modal-body'),
   postsUl: document.querySelector('list-group'),
+  submitButton: document.querySelector('button[type="submit"]'),
 };

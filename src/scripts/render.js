@@ -3,8 +3,7 @@ const createElementWithAttributes = (tagName, classNames, attributes, text) => {
   classNames.forEach((className) => element.classList.add(className));
   if (attributes) {
     Object.entries(attributes).forEach(([key, value]) =>
-      element.setAttribute(key, value),
-    );
+      element.setAttribute(key, value));
   }
   element.textContent = text;
   return element;
@@ -19,7 +18,9 @@ const createList = (items) => {
   return ul;
 };
 
-const createPostItem = ({ title, url, clicked, id }) => {
+const createPostItem = ({
+  title, url, clicked, id,
+}) => {
   const li = createElementWithAttributes('li', [
     'list-group-item',
     'd-flex',
